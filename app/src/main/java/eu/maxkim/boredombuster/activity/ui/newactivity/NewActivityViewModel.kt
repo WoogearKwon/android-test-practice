@@ -2,6 +2,7 @@ package eu.maxkim.boredombuster.activity.ui.newactivity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.maxkim.boredombuster.activity.model.Activity
 import eu.maxkim.boredombuster.activity.usecase.DeleteActivity
