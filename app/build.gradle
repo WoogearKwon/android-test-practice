@@ -97,7 +97,9 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
-    // module build.gradle
+    // coroutine test
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 
+    // acc test
+    testImplementation "androidx.arch.core:core-testing:$arch_testing_version"
 }
