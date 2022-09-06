@@ -5,7 +5,10 @@ import eu.maxkim.boredombuster.activity.usecase.DeleteActivity
 
 class FakeDeleteActivity : DeleteActivity {
 
+    var wasCancelled = false
+        private set
+
     override suspend fun invoke(activity: Activity) {
-        TODO("Not yet implemented")
+        wasCancelled = true
     }
 }

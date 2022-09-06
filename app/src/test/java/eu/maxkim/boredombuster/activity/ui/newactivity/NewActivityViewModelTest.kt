@@ -2,14 +2,8 @@ package eu.maxkim.boredombuster.activity.ui.newactivity
 
 import eu.maxkim.boredombuster.activity.fake.usecase.*
 import eu.maxkim.boredombuster.util.CoroutineRule
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -34,7 +28,7 @@ class NewActivityViewModelTest {
     }
 
     @Test
-    fun `creating a viewModel updates uui state to success after loading`() {
+    fun `creating a viewModel updates ui state to success after loading`() {
         // Arrange
         val viewModel = NewActivityViewModel(
             FakeGetRandomActivity(),
@@ -115,5 +109,43 @@ class NewActivityViewModelTest {
         // Assert
         val actualState = viewModel.uiState.value
         assertEquals(actualState, expectedUiState)
+    }
+
+    @Test
+    fun `calling setIsFavorite(true) triggers SaveActivity use case`() {
+        // Arrange
+        val fakeSaveActivity = FakeSaveActivity()
+        val viewModel = NewActivityViewModel(
+            FakeGetRandomActivity(),
+            fakeSaveActivity,
+            FakeDeleteActivity(),
+            FakeIsActivitySaved()
+        )
+
+        // Act
+        viewModel.setIsFavorite(activity1, true)
+        coroutineRule.testDispatcher.scheduler.runCurrent()
+
+        // Assert
+        assert(fakeSaveActivity.wasCancelled)
+    }
+
+    @Test
+    fun `calling setIsFavorite(false) triggers DeleteActivity use case`() {
+        // Arrange
+        val fakeDeleteActivity = FakeDeleteActivity()
+        val viewModel = NewActivityViewModel(
+            FakeGetRandomActivity(),
+            FakeSaveActivity(),
+            fakeDeleteActivity,
+            FakeIsActivitySaved()
+        )
+
+        // Act
+        viewModel.setIsFavorite(activity1, false)
+        coroutineRule.testDispatcher.scheduler.runCurrent()
+
+        // Assert
+        assert(fakeDeleteActivity.wasCancelled)
     }
 }
