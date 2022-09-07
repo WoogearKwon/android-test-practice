@@ -41,6 +41,7 @@ class FavoritesViewModelTest {
 
         val expectedList = listOf(activity1, activity2)
 
+        // stubbing liveData in viewModel
         whenever(mockGetFavoriteActivities.invoke()).doReturn(liveDataToReturn)
 
         val viewModel = FavoritesViewModel(
@@ -49,9 +50,13 @@ class FavoritesViewModelTest {
         )
 
         // Act
+        // liveData 전달된 데이터를 어딘가에 잡아두고(capture), 나중에 assert 할 때 사용해야 한다.
+        // we are using observeForever since we don't have [LifeCycleOwner]
         viewModel.uiStateLiveData.observeForever(activityListObserver)
 
         // Assert
+        // captor: 모의 객체를 호출할 때 인자를 검증하기 위함
+        // (메서드 호출 여부를 검증하는 과정에서 실제 호출 시 전달한 인자를 보관할 수 있음)
         verify(activityListObserver, times(1)).onChanged(activityListCaptor.capture())
         assert(activityListCaptor.value is FavoritesUiState.List)
 
