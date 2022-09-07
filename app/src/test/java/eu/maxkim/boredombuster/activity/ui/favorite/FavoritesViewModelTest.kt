@@ -8,6 +8,10 @@ import eu.maxkim.boredombuster.activity.fake.usecase.activity2
 import eu.maxkim.boredombuster.activity.model.Activity
 import eu.maxkim.boredombuster.activity.usecase.DeleteActivity
 import eu.maxkim.boredombuster.activity.usecase.GetFavoriteActivities
+import eu.maxkim.boredombuster.util.CoroutineRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -22,6 +26,9 @@ class FavoritesViewModelTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val coroutineRule = CoroutineRule()
 
     // JUnit will create a new test class instance each time it runs a test,
     // so we don't need to reset mocks after each test to avoid a dirty state.
@@ -79,9 +86,26 @@ class FavoritesViewModelTest {
 
         // Act
         viewModel.uiStateLiveData.observeForever(activityListObserver)
-        
+
         // Assert
         verify(activityListObserver, times(1)).onChanged(activityListCaptor.capture())
         assert(activityListCaptor.value is FavoritesUiState.Empty)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `calling deleteActivity() interacts with the correct use case`() = runTest {
+        // Arrange
+        val viewModel = FavoritesViewModel(
+            mockGetFavoriteActivities,
+            mockDeleteActivity
+        )
+
+        // Act
+        viewModel.deleteActivity(activity1)
+        advanceUntilIdle() // works the same as runCurrent() in this case
+
+        // Assert
+        verify(mockDeleteActivity, times(1)).invoke(activity1)
     }
 }
