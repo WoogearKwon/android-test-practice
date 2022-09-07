@@ -50,7 +50,7 @@ class FavoritesViewModelTest {
         )
 
         // Act
-        // liveData 전달된 데이터를 어딘가에 잡아두고(capture), 나중에 assert 할 때 사용해야 한다.
+        // liveData 를 통해 전달된 데이터를 어딘가에 잡아두고(capture), 나중에 assert 할 때 사용해야 한다.
         // we are using observeForever since we don't have [LifeCycleOwner]
         viewModel.uiStateLiveData.observeForever(activityListObserver)
 
