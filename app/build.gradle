@@ -51,6 +51,14 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    sourceSets {
+        test {
+            main.java.srcDirs += "$projectDir/src/testShared"
+        }
+        androidTest {
+            main.java.srcDirs += "$projectDir/src/testShared"
+        }
+    }
 }
 
 dependencies {
