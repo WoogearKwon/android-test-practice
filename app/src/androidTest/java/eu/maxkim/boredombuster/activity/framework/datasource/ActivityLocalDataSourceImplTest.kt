@@ -13,6 +13,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ActivityLocalDataSourceImplTest {
     private lateinit var activityDao: ActivityDao
     private lateinit var database: AppDatabase
@@ -29,9 +30,8 @@ class ActivityLocalDataSourceImplTest {
         database.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun canSaveActivityToTheDbAndReadIt() = runTest{
+    fun can_save_activity_to_the_db_and_read_it() = runTest{
         // Arrange
         val activityLocalDataSource = ActivityLocalDataSourceImpl(activityDao)
 
@@ -40,5 +40,18 @@ class ActivityLocalDataSourceImplTest {
 
         // Assert
         assert(activityLocalDataSource.isActivitySaved(activity1.key))
+    }
+
+    @Test
+    fun can_delete_activity_from_db() = runTest {
+        // Arrange
+        val activityLocalSource = ActivityLocalDataSourceImpl(activityDao)
+        activityLocalSource.saveActivity(activity1)
+
+        // Act
+        activityLocalSource.deleteActivity(activity1)
+
+        // Assert
+        assert(activityLocalSource.isActivitySaved(activity1.key).not())
     }
 }
