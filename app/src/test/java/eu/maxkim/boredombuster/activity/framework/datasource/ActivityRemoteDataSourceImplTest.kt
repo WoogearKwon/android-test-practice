@@ -1,5 +1,6 @@
 package eu.maxkim.boredombuster.activity.framework.datasource
 
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import eu.maxkim.boredombuster.activity.framework.api.ActivityApiClient
 import eu.maxkim.boredombuster.activity.framework.api.ActivityTypeAdapter
@@ -13,6 +14,7 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -63,5 +65,43 @@ class ActivityRemoteDataSourceImplTest {
         // Assert
         assert(result is Result.Success)
         assertEquals((result as Result.Success).data, expectedActivity)
+    }
+
+    @Test
+    fun `잘못된 구조의 응답이 json 에러 result를 반환한다`() = runTest {
+        // Arrange
+        val response = MockResponse()
+            .setBody(errorResponse)
+            .setResponseCode(200)
+
+        mockWebServer.enqueue(response)
+
+        val activityRemoteDataSource = ActivityRemoteDataSourceImpl(apiClient)
+
+        // Act
+        val result = activityRemoteDataSource.getActivity()
+
+        // Assert
+        assert(result is Result.Error)
+        assert((result as Result.Error).error is JsonDataException)
+    }
+
+    @Test
+    fun `에러 응답이 http 에러 결과를 반환한다`() = runTest {
+        // Arrange
+        val response = MockResponse()
+            .setBody(errorResponse)
+            .setResponseCode(400)
+
+        mockWebServer.enqueue(response)
+
+        val activityRemoteDataSource = ActivityRemoteDataSourceImpl(apiClient)
+
+        // Act
+        val result = activityRemoteDataSource.getActivity()
+
+        // Assert
+        assert(result is Result.Error)
+        assert((result as Result.Error).error is HttpException)
     }
 }
