@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "BoredomBuster"
+rootProject.name = "android-testing"
 include ':app'
