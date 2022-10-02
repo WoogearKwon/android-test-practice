@@ -96,6 +96,8 @@ dependencies {
 
     // Debug
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
+
 
     // Test
     testImplementation "junit:junit:$junit_version"
